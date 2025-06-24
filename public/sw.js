@@ -1,4 +1,3 @@
-
 const CACHE_NAME = 'monografiaplus-v1'
 const urlsToCache = [
   '/',

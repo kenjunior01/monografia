@@ -1,7 +1,7 @@
 The change optimizes the chat widget for mobile responsiveness by adjusting the sizes and paddings based on screen size.
-```
+\`\`\`
 
-```replit_final_file
+\`\`\`replit_final_file
 "use client"
 
 import { useState } from "react"
