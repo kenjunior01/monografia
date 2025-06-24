@@ -2,6 +2,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useIsMobile } from "@/components/ui/use-mobile"
 import {
   Globe,
   GraduationCap,
@@ -13,6 +14,8 @@ import {
   AlertTriangle,
   Target,
   Zap,
+  Menu,
+  X,
 } from "lucide-react"
 
 export default function HomePage() {

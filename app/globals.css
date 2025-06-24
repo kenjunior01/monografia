@@ -235,6 +235,30 @@
   background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
 }
 
+/* PWA and Mobile-specific improvements */
+@layer utilities {
+  .pwa-safe-area {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .mobile-scroll-smooth {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+
+  .mobile-tap-highlight {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-text-size-adjust {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+}
+
 /* Mobile-specific improvements */
 @media (max-width: 640px) {
   /* Improve touch targets */
@@ -280,6 +304,41 @@
   .badge {
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
+  }
+
+  /* Mobile-specific scroll improvements */
+  .scroll-area {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Prevent zoom on input focus */
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Improve mobile table display */
+  .table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mobile-friendly grid improvements */
+  .mobile-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .mobile-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
   }
 }
 
