@@ -162,16 +162,16 @@ export default function AfiliadoDashboard() {
 
       <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
-        <div className="grid md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
           <Card className="bg-gradient-to-r from-green-50 to-emerald-100 border-green-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-green-700">Ganho Total</p>
-                  <p className="text-2xl font-bold text-green-900">{estatisticas.ganhoTotal.toLocaleString()} MT</p>
+            <CardContent className="p-3 md:p-6">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <div className="flex-1">
+                  <p className="text-xs md:text-sm font-medium text-green-700">Ganho Total</p>
+                  <p className="text-lg md:text-2xl font-bold text-green-900">{estatisticas.ganhoTotal.toLocaleString()} MT</p>
                   <p className="text-xs text-green-600">+{estatisticas.ganhoMes.toLocaleString()} MT este mês</p>
                 </div>
-                <DollarSign className="h-8 w-8 text-green-600" />
+                <DollarSign className="h-6 w-6 md:h-8 md:w-8 text-green-600 self-end md:self-center" />
               </div>
             </CardContent>
           </Card>
@@ -219,11 +219,11 @@ export default function AfiliadoDashboard() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
-            <TabsTrigger value="indicacoes">Minhas Indicações</TabsTrigger>
-            <TabsTrigger value="materiais">Materiais Marketing</TabsTrigger>
-            <TabsTrigger value="pagamentos">Pagamentos</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
+            <TabsTrigger value="overview" className="text-xs md:text-sm">Visão Geral</TabsTrigger>
+            <TabsTrigger value="indicacoes" className="text-xs md:text-sm">Indicações</TabsTrigger>
+            <TabsTrigger value="materiais" className="text-xs md:text-sm">Materiais</TabsTrigger>
+            <TabsTrigger value="pagamentos" className="text-xs md:text-sm">Pagamentos</TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">

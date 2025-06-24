@@ -1,3 +1,7 @@
+The change optimizes the chat widget for mobile responsiveness by adjusting the sizes and paddings based on screen size.
+```
+
+```replit_final_file
 "use client"
 
 import { useState } from "react"
@@ -66,28 +70,32 @@ export function ChatWidget() {
   }
 
   return (
-    <Card className={`fixed bottom-4 right-4 w-80 shadow-xl z-50 transition-all ${isMinimized ? "h-14" : "h-96"}`}>
-      <CardHeader className="flex flex-row items-center justify-between p-4 bg-blue-600 text-white rounded-t-lg">
-        <CardTitle className="text-sm font-medium">Suporte MonografiaPlus</CardTitle>
-        <div className="flex gap-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsMinimized(!isMinimized)}
-            className="text-white hover:bg-blue-700 h-6 w-6 p-0"
-          >
-            <Minimize2 className="h-3 w-3" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setIsOpen(false)}
-            className="text-white hover:bg-blue-700 h-6 w-6 p-0"
-          >
-            <X className="h-3 w-3" />
-          </Button>
-        </div>
-      </CardHeader>
+    <div className="fixed bottom-4 right-4 z-50">
+      <Card className={`transition-all duration-300 ${isMinimized ? "w-14 h-14 md:w-16 md:h-16" : "w-72 h-80 md:w-80 md:h-96"}`}>
+        <CardHeader
+          className="flex flex-row items-center justify-between p-3 md:p-4 cursor-pointer bg-blue-600 text-white rounded-t-lg"
+          onClick={() => setIsMinimized(!isMinimized)}
+        >
+          <div className="flex items-center gap-2">
+            {!isMinimized && (
+              <>
+                <MessageSquare className="h-4 w-4 md:h-5 md:w-5" />
+                <div>
+                  <CardTitle className="text-xs md:text-sm">Suporte Online</CardTitle>
+                  <CardDescription className="text-xs text-blue-100">
+                    Como podemos ajudar?
+                  </CardDescription>
+                </div>
+              </>
+            )}
+            {isMinimized && <MessageSquare className="h-5 w-5 md:h-6 md:w-6 mx-auto" />}
+          </div>
+          {!isMinimized && (
+            <Button variant="ghost" size="sm" className="text-white hover:bg-blue-700 p-1">
+              <X className="h-3 w-3 md:h-4 md:w-4" />
+            </Button>
+          )}
+        </CardHeader>
 
       {!isMinimized && (
         <CardContent className="p-0 flex flex-col h-80">
@@ -133,5 +141,6 @@ export function ChatWidget() {
         </CardContent>
       )}
     </Card>
+    </div>
   )
 }
