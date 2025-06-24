@@ -1,356 +1,365 @@
+
 "use client"
 
-import { useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Progress } from "@/components/ui/progress"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { useToast } from "@/components/ui/use-toast"
 import {
   DollarSign,
   Users,
   TrendingUp,
-  Copy,
   Share2,
+  Copy,
+  WhatsApp,
+  Facebook,
+  Instagram,
+  Twitter,
   Download,
   Eye,
   CheckCircle,
   Clock,
+  AlertCircle,
   Target,
+  Gift,
   Zap,
-  MessageSquare,
-  LinkIcon,
+  Star,
+  Phone,
+  Mail,
+  Globe,
+  BarChart3,
+  Calendar,
+  FileText,
+  Video,
+  Image as ImageIcon,
+  Megaphone,
+  Link
 } from "lucide-react"
 
 export default function AfiliadoDashboard() {
-  const [codigoAfiliado] = useState("AFIL-CARLOS-2024")
-  const [linkAfiliado] = useState(`https://monografiaplus.com/novo-pedido?ref=${codigoAfiliado}`)
-
-  const [estatisticas] = useState({
-    totalIndicacoes: 23,
-    indicacoesPagas: 18,
-    indicacoesPendentes: 5,
-    ganhoTotal: 18000,
-    ganhoPendente: 5000,
-    ganhoMes: 8000,
-    conversao: 78.3,
-    metaMensal: 25,
-    progressoMeta: 72,
+  const { toast } = useToast()
+  const [stats, setStats] = useState({
+    totalComissoes: 2450.00,
+    comissoesPendentes: 890.00,
+    indicacoesTotal: 47,
+    indicacoesMes: 12,
+    conversaoTaxa: 24.5,
+    ticketMedio: 750.00
   })
 
-  const [indicacoes] = useState([
+  const [linkAfiliado] = useState("https://monografiaplus.com/?ref=AFL001")
+  const [codigoAfiliado] = useState("AFL001")
+
+  const indicacoes = [
     {
-      id: "IND-001",
-      cliente: "Maria Santos",
-      email: "maria@email.com",
-      dataIndicacao: "2024-02-01",
-      status: "pago",
-      valorPedido: "18.500 MT",
-      comissao: "1.000 MT",
-      dataPagamento: "2024-02-03",
-    },
-    {
-      id: "IND-002",
+      id: 1,
       cliente: "João Silva",
       email: "joao@email.com",
-      dataIndicacao: "2024-02-02",
+      pedido: "MON-2024-001",
+      valor: 750.00,
+      comissao: 75.00,
+      status: "convertido",
+      data: "2024-01-15"
+    },
+    {
+      id: 2,
+      cliente: "Maria Santos",
+      email: "maria@email.com",
+      pedido: "MON-2024-002",
+      valor: 920.00,
+      comissao: 92.00,
+      status: "convertido",
+      data: "2024-01-14"
+    },
+    {
+      id: 3,
+      cliente: "Pedro Costa",
+      email: "pedro@email.com",
+      pedido: "",
+      valor: 0,
+      comissao: 0,
       status: "pendente",
-      valorPedido: "15.200 MT",
-      comissao: "1.000 MT",
-      dataPagamento: null,
-    },
-    {
-      id: "IND-003",
-      cliente: "Ana Costa",
-      email: "ana@email.com",
-      dataIndicacao: "2024-02-03",
-      status: "pago",
-      valorPedido: "22.800 MT",
-      comissao: "1.000 MT",
-      dataPagamento: "2024-02-05",
-    },
-  ])
+      data: "2024-01-13"
+    }
+  ]
 
-  const [materiaisMarketing] = useState([
+  const materiaisMarketing = [
     {
-      tipo: "Banner",
-      nome: "Banner Principal - Urgência",
-      formato: "1080x1080",
-      downloads: 45,
+      id: 1,
+      tipo: "banner",
+      titulo: "Banner Principal 300x250",
+      descricao: "Banner otimizado para redes sociais",
+      formato: "PNG",
+      downloads: 156
     },
     {
-      tipo: "Post",
-      nome: "Post Instagram - Depoimento",
-      formato: "1080x1080",
-      downloads: 32,
+      id: 2,
+      tipo: "video",
+      titulo: "Vídeo Promocional 60s",
+      descricao: "Vídeo explicativo sobre nossos serviços",
+      formato: "MP4",
+      downloads: 89
     },
     {
-      tipo: "Story",
-      nome: "Story - Oferta Limitada",
-      formato: "1080x1920",
-      downloads: 28,
-    },
-    {
-      tipo: "Texto",
-      nome: "Copy WhatsApp - Persuasivo",
+      id: 3,
+      tipo: "texto",
+      titulo: "Scripts para WhatsApp",
+      descricao: "Textos prontos para abordagem",
       formato: "TXT",
-      downloads: 67,
+      downloads: 234
+    }
+  ]
+
+  const comissoesPagamentos = [
+    {
+      id: 1,
+      periodo: "Dezembro 2023",
+      valor: 1250.00,
+      status: "pago",
+      dataPagamento: "2024-01-05",
+      indicacoes: 15
     },
-  ])
+    {
+      id: 2,
+      periodo: "Janeiro 2024",
+      valor: 890.00,
+      status: "pendente",
+      dataPagamento: "",
+      indicacoes: 12
+    }
+  ]
 
   const copiarLink = () => {
     navigator.clipboard.writeText(linkAfiliado)
-    // Toast notification
+    toast({
+      title: "Link copiado!",
+      description: "Seu link de afiliado foi copiado para a área de transferência.",
+    })
   }
 
-  const copiarCodigo = () => {
-    navigator.clipboard.writeText(codigoAfiliado)
-    // Toast notification
+  const compartilharRede = (rede: string) => {
+    const texto = "Precisa de uma monografia de qualidade? Conheça a MonografiaPlus!"
+    const url = linkAfiliado
+    
+    const links = {
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(texto + " " + url)}`,
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+      twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(texto)}&url=${encodeURIComponent(url)}`,
+      instagram: url // Instagram não permite compartilhamento direto
+    }
+    
+    if (rede === 'instagram') {
+      copiarLink()
+      toast({
+        title: "Link copiado!",
+        description: "Cole o link no seu story ou post do Instagram.",
+      })
+    } else {
+      window.open(links[rede as keyof typeof links], '_blank')
+    }
+  }
+
+  const baixarMaterial = (materialId: number) => {
+    toast({
+      title: "Download iniciado!",
+      description: "O material está sendo baixado...",
+    })
   }
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "pago":
-        return "bg-green-100 text-green-800"
-      case "pendente":
-        return "bg-yellow-100 text-yellow-800"
-      case "cancelado":
-        return "bg-red-100 text-red-800"
+      case 'convertido':
+        return 'bg-green-100 text-green-800'
+      case 'pendente':
+        return 'bg-yellow-100 text-yellow-800'
+      case 'pago':
+        return 'bg-blue-100 text-blue-800'
       default:
-        return "bg-gray-100 text-gray-800"
-    }
-  }
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case "pago":
-        return "Pago"
-      case "pendente":
-        return "Pendente"
-      case "cancelado":
-        return "Cancelado"
-      default:
-        return "Desconhecido"
+        return 'bg-gray-100 text-gray-800'
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">Painel do Afiliado</h1>
-              <p className="text-gray-600">Gerencie suas indicações e maximize seus ganhos</p>
-            </div>
-            <div className="flex gap-3">
-              <Button variant="outline">
-                <MessageSquare className="h-4 w-4 mr-2" />
-                Suporte
-              </Button>
-              <Button className="bg-green-600 hover:bg-green-700">
-                <Share2 className="h-4 w-4 mr-2" />
-                Compartilhar Link
-              </Button>
-            </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Dashboard Afiliado</h1>
+            <p className="text-gray-600">Gerencie suas indicações e acompanhe seus ganhos</p>
+          </div>
+          
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Badge variant="outline" className="text-center">
+              Código: {codigoAfiliado}
+            </Badge>
+            <Badge className="bg-green-600 text-center">
+              Status: Ativo
+            </Badge>
           </div>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-6 md:mb-8">
-          <Card className="bg-gradient-to-r from-green-50 to-emerald-100 border-green-200">
-            <CardContent className="p-3 md:p-6">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-                <div className="flex-1">
-                  <p className="text-xs md:text-sm font-medium text-green-700">Ganho Total</p>
-                  <p className="text-lg md:text-2xl font-bold text-green-900">{estatisticas.ganhoTotal.toLocaleString()} MT</p>
-                  <p className="text-xs text-green-600">+{estatisticas.ganhoMes.toLocaleString()} MT este mês</p>
-                </div>
-                <DollarSign className="h-6 w-6 md:h-8 md:w-8 text-green-600 self-end md:self-center" />
-              </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Comissões Total</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">MT {stats.totalComissoes.toLocaleString()}</div>
+              <p className="text-xs text-muted-foreground">+12% em relação ao mês anterior</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-blue-700">Total Indicações</p>
-                  <p className="text-2xl font-bold text-blue-900">{estatisticas.totalIndicacoes}</p>
-                  <p className="text-xs text-blue-600">{estatisticas.indicacoesPagas} pagas</p>
-                </div>
-                <Users className="h-8 w-8 text-blue-600" />
-              </div>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Indicações</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.indicacoesTotal}</div>
+              <p className="text-xs text-muted-foreground">{stats.indicacoesMes} este mês</p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-purple-700">Taxa Conversão</p>
-                  <p className="text-2xl font-bold text-purple-900">{estatisticas.conversao}%</p>
-                  <p className="text-xs text-purple-600">Acima da média</p>
-                </div>
-                <TrendingUp className="h-8 w-8 text-purple-600" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-r from-orange-50 to-orange-100 border-orange-200">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-orange-700">Meta Mensal</p>
-                  <p className="text-2xl font-bold text-orange-900">
-                    {Math.round((estatisticas.progressoMeta / 100) * estatisticas.metaMensal)}/{estatisticas.metaMensal}
-                  </p>
-                  <Progress value={estatisticas.progressoMeta} className="h-2 mt-2" />
-                </div>
-                <Target className="h-8 w-8 text-orange-600" />
-              </div>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Taxa Conversão</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">{stats.conversaoTaxa}%</div>
+              <Progress value={stats.conversaoTaxa} className="mt-2" />
             </CardContent>
           </Card>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-            <TabsTrigger value="overview" className="text-xs md:text-sm">Visão Geral</TabsTrigger>
-            <TabsTrigger value="indicacoes" className="text-xs md:text-sm">Indicações</TabsTrigger>
-            <TabsTrigger value="materiais" className="text-xs md:text-sm">Materiais</TabsTrigger>
-            <TabsTrigger value="pagamentos" className="text-xs md:text-sm">Pagamentos</TabsTrigger>
+        {/* Main Content */}
+        <Tabs defaultValue="overview" className="space-y-4">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-5">
+            <TabsTrigger value="overview">Visão Geral</TabsTrigger>
+            <TabsTrigger value="indicacoes">Indicações</TabsTrigger>
+            <TabsTrigger value="marketing">Marketing</TabsTrigger>
+            <TabsTrigger value="comissoes">Comissões</TabsTrigger>
+            <TabsTrigger value="ferramentas">Ferramentas</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="overview">
-            <div className="grid lg:grid-cols-3 gap-6">
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Link de Afiliado */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <LinkIcon className="h-5 w-5" />
-                    Seu Link de Afiliado
-                  </CardTitle>
-                  <CardDescription>Compartilhe este link para ganhar comissões</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="text-sm font-medium">Código do Afiliado:</label>
-                      <div className="flex gap-2 mt-1">
-                        <Input value={codigoAfiliado} readOnly className="font-mono" />
-                        <Button variant="outline" onClick={copiarCodigo}>
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium">Link Completo:</label>
-                      <div className="flex gap-2 mt-1">
-                        <Input value={linkAfiliado} readOnly className="font-mono text-xs" />
-                        <Button variant="outline" onClick={copiarLink}>
-                          <Copy className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                      <h4 className="font-medium text-blue-800 mb-2">💡 Como usar seu link:</h4>
-                      <ul className="text-sm text-blue-700 space-y-1">
-                        <li>• Compartilhe em redes sociais</li>
-                        <li>• Envie por WhatsApp para amigos</li>
-                        <li>• Use em grupos de estudantes</li>
-                        <li>• Inclua em seu bio do Instagram</li>
-                      </ul>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <Button className="bg-green-600 hover:bg-green-700">
-                        <Share2 className="h-4 w-4 mr-2" />
-                        Compartilhar WhatsApp
-                      </Button>
-                      <Button variant="outline">
-                        <Download className="h-4 w-4 mr-2" />
-                        QR Code
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Resumo Financeiro */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-green-800">💰 Resumo Financeiro</CardTitle>
+                  <CardTitle className="flex items-center gap-2">
+                    <Link className="h-5 w-5" />
+                    Seu Link de Afiliado
+                  </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Ganho Total:</span>
-                      <span className="font-bold text-green-600">{estatisticas.ganhoTotal.toLocaleString()} MT</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Pendente:</span>
-                      <span className="font-medium text-yellow-600">
-                        {estatisticas.ganhoPendente.toLocaleString()} MT
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm">Este Mês:</span>
-                      <span className="font-medium">{estatisticas.ganhoMes.toLocaleString()} MT</span>
-                    </div>
-
-                    <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                      <p className="text-sm font-medium text-green-800">Próximo Pagamento:</p>
-                      <p className="text-lg font-bold text-green-600">
-                        {estatisticas.ganhoPendente.toLocaleString()} MT
-                      </p>
-                      <p className="text-xs text-green-700">Processamento em 24-48h</p>
-                    </div>
-
-                    <Button className="w-full bg-green-600 hover:bg-green-700">
-                      <DollarSign className="h-4 w-4 mr-2" />
-                      Solicitar Pagamento
+                <CardContent className="space-y-4">
+                  <div className="flex gap-2">
+                    <Input value={linkAfiliado} readOnly className="flex-1" />
+                    <Button onClick={copiarLink} size="sm">
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => compartilharRede('whatsapp')}
+                      className="flex items-center gap-2"
+                    >
+                      <WhatsApp className="h-4 w-4" />
+                      WhatsApp
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => compartilharRede('facebook')}
+                      className="flex items-center gap-2"
+                    >
+                      <Facebook className="h-4 w-4" />
+                      Facebook
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => compartilharRede('instagram')}
+                      className="flex items-center gap-2"
+                    >
+                      <Instagram className="h-4 w-4" />
+                      Instagram
                     </Button>
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Metas e Conquistas */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5" />
+                    Metas do Mês
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Indicações (12/15)</span>
+                      <span>80%</span>
+                    </div>
+                    <Progress value={80} />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span>Comissões (MT 890/1200)</span>
+                      <span>74%</span>
+                    </div>
+                    <Progress value={74} />
+                  </div>
+
+                  <Alert>
+                    <Gift className="h-4 w-4" />
+                    <AlertDescription>
+                      Faltam apenas 3 indicações para ganhar bônus de MT 200!
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
             </div>
 
-            {/* Indicações Recentes */}
-            <Card className="mt-6">
+            {/* Últimas Indicações */}
+            <Card>
               <CardHeader>
-                <CardTitle>📊 Indicações Recentes</CardTitle>
-                <CardDescription>Suas últimas indicações e status</CardDescription>
+                <CardTitle>Últimas Indicações</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {indicacoes.slice(0, 5).map((indicacao) => (
-                    <div key={indicacao.id} className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-10 w-10">
-                          <AvatarFallback>
-                            {indicacao.cliente
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-medium">{indicacao.cliente}</p>
-                          <p className="text-sm text-gray-600">{indicacao.email}</p>
-                          <p className="text-xs text-gray-500">Indicado em {indicacao.dataIndicacao}</p>
-                        </div>
+                  {indicacoes.slice(0, 3).map((indicacao) => (
+                    <div key={indicacao.id} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-medium">{indicacao.cliente}</p>
+                        <p className="text-sm text-gray-600">{indicacao.email}</p>
                       </div>
                       <div className="text-right">
-                        <Badge className={getStatusColor(indicacao.status)}>{getStatusText(indicacao.status)}</Badge>
-                        <p className="text-sm font-medium mt-1">{indicacao.comissao}</p>
-                        <p className="text-xs text-gray-500">Pedido: {indicacao.valorPedido}</p>
+                        <Badge className={getStatusColor(indicacao.status)}>
+                          {indicacao.status}
+                        </Badge>
+                        {indicacao.comissao > 0 && (
+                          <p className="text-sm font-medium text-green-600">
+                            +MT {indicacao.comissao}
+                          </p>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -359,64 +368,38 @@ export default function AfiliadoDashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="indicacoes">
+          {/* Indicações Tab */}
+          <TabsContent value="indicacoes" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>👥 Todas as Indicações</CardTitle>
-                <CardDescription>Histórico completo das suas indicações</CardDescription>
+                <CardTitle>Todas as Indicações</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {indicacoes.map((indicacao) => (
                     <div key={indicacao.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <Avatar className="h-12 w-12">
-                            <AvatarFallback>
-                              {indicacao.cliente
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <h3 className="font-medium">{indicacao.cliente}</h3>
-                            <p className="text-sm text-gray-600">{indicacao.email}</p>
-                            <p className="text-xs text-gray-500">ID: {indicacao.id}</p>
-                          </div>
-                        </div>
-                        <Badge className={getStatusColor(indicacao.status)}>{getStatusText(indicacao.status)}</Badge>
-                      </div>
-
-                      <div className="grid md:grid-cols-4 gap-4 text-sm">
+                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                         <div>
-                          <p className="text-gray-500">Data Indicação:</p>
-                          <p className="font-medium">{indicacao.dataIndicacao}</p>
+                          <p className="font-medium">{indicacao.cliente}</p>
+                          <p className="text-sm text-gray-600">{indicacao.email}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">Valor Pedido:</p>
-                          <p className="font-medium">{indicacao.valorPedido}</p>
+                          <p className="text-sm text-gray-600">Pedido</p>
+                          <p className="font-medium">{indicacao.pedido || "Pendente"}</p>
                         </div>
                         <div>
-                          <p className="text-gray-500">Sua Comissão:</p>
-                          <p className="font-medium text-green-600">{indicacao.comissao}</p>
+                          <p className="text-sm text-gray-600">Comissão</p>
+                          <p className="font-medium text-green-600">
+                            MT {indicacao.comissao.toFixed(2)}
+                          </p>
                         </div>
-                        <div>
-                          <p className="text-gray-500">Data Pagamento:</p>
-                          <p className="font-medium">{indicacao.dataPagamento || "Pendente"}</p>
+                        <div className="flex items-center justify-between">
+                          <Badge className={getStatusColor(indicacao.status)}>
+                            {indicacao.status}
+                          </Badge>
+                          <span className="text-sm text-gray-500">{indicacao.data}</span>
                         </div>
                       </div>
-
-                      {indicacao.status === "pendente" && (
-                        <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 text-yellow-600" />
-                            <span className="text-sm text-yellow-800">
-                              Aguardando pagamento do cliente para liberar sua comissão
-                            </span>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   ))}
                 </div>
@@ -424,117 +407,230 @@ export default function AfiliadoDashboard() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="materiais">
+          {/* Marketing Tab */}
+          <TabsContent value="marketing" className="space-y-4">
             <Card>
               <CardHeader>
-                <CardTitle>🎨 Materiais de Marketing</CardTitle>
-                <CardDescription>Banners, posts e textos prontos para usar</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Megaphone className="h-5 w-5" />
+                  Materiais de Marketing
+                </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {materiaisMarketing.map((material, index) => (
-                    <Card
-                      key={index}
-                      className="border-2 border-dashed border-gray-200 hover:border-blue-300 transition-colors"
-                    >
-                      <CardContent className="p-4">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            {material.tipo === "Banner" && <Eye className="h-6 w-6 text-blue-600" />}
-                            {material.tipo === "Post" && <Share2 className="h-6 w-6 text-blue-600" />}
-                            {material.tipo === "Story" && <Zap className="h-6 w-6 text-blue-600" />}
-                            {material.tipo === "Texto" && <MessageSquare className="h-6 w-6 text-blue-600" />}
-                          </div>
-                          <h3 className="font-medium mb-1">{material.nome}</h3>
-                          <p className="text-sm text-gray-600 mb-2">{material.formato}</p>
-                          <p className="text-xs text-gray-500 mb-3">{material.downloads} downloads</p>
-                          <Button size="sm" className="w-full">
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </Button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {materiaisMarketing.map((material) => (
+                    <div key={material.id} className="border rounded-lg p-4">
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-2">
+                          {material.tipo === 'banner' && <ImageIcon className="h-5 w-5 text-blue-500" />}
+                          {material.tipo === 'video' && <Video className="h-5 w-5 text-red-500" />}
+                          {material.tipo === 'texto' && <FileText className="h-5 w-5 text-green-500" />}
+                          <span className="text-sm font-medium">{material.formato}</span>
                         </div>
-                      </CardContent>
-                    </Card>
+                        <Badge variant="outline">{material.downloads} downloads</Badge>
+                      </div>
+                      
+                      <h3 className="font-medium mb-2">{material.titulo}</h3>
+                      <p className="text-sm text-gray-600 mb-4">{material.descricao}</p>
+                      
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          onClick={() => baixarMaterial(material.id)}
+                          className="flex-1"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Baixar
+                        </Button>
+                        <Button size="sm" variant="outline">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
                   ))}
                 </div>
+              </CardContent>
+            </Card>
 
-                <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-800 mb-2">💡 Dicas de Uso:</h4>
-                  <ul className="text-sm text-blue-700 space-y-1">
-                    <li>• Personalize os materiais com seu toque pessoal</li>
-                    <li>• Use stories para criar urgência</li>
-                    <li>• Compartilhe depoimentos reais</li>
-                    <li>• Foque nos benefícios para o estudante</li>
-                  </ul>
+            {/* Scripts Prontos */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Scripts Prontos</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-3">
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium mb-2">WhatsApp - Abordagem Inicial</h4>
+                    <p className="text-sm text-gray-700 mb-2">
+                      "Olá! Você está fazendo TCC ou monografia? Conheço uma plataforma incrível que pode te ajudar com qualidade garantida. Quer saber mais?"
+                    </p>
+                    <Button size="sm" variant="outline" onClick={copiarLink}>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copiar
+                    </Button>
+                  </div>
+                  
+                  <div className="p-3 bg-gray-50 rounded-lg">
+                    <h4 className="font-medium mb-2">Redes Sociais - Post</h4>
+                    <p className="text-sm text-gray-700 mb-2">
+                      "TCC te deixando maluco? 😅 Descobri uma plataforma que faz monografias personalizadas com qualidade acadêmica. Vale muito a pena conferir! #TCC #Monografia #Formatura"
+                    </p>
+                    <Button size="sm" variant="outline" onClick={copiarLink}>
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copiar
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          <TabsContent value="pagamentos">
-            <div className="grid lg:grid-cols-3 gap-6">
+          {/* Comissões Tab */}
+          <TabsContent value="comissoes" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <Card className="lg:col-span-2">
                 <CardHeader>
-                  <CardTitle>💳 Histórico de Pagamentos</CardTitle>
-                  <CardDescription>Todos os seus pagamentos recebidos</CardDescription>
+                  <CardTitle>Histórico de Comissões</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {indicacoes
-                      .filter((i) => i.status === "pago")
-                      .map((indicacao) => (
-                        <div key={indicacao.id} className="flex items-center justify-between p-4 border rounded-lg">
+                    {comissoesPagamentos.map((comissao) => (
+                      <div key={comissao.id} className="border rounded-lg p-4">
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
                           <div>
-                            <p className="font-medium">{indicacao.cliente}</p>
-                            <p className="text-sm text-gray-600">Indicação #{indicacao.id}</p>
-                            <p className="text-xs text-gray-500">Pago em {indicacao.dataPagamento}</p>
+                            <p className="font-medium">{comissao.periodo}</p>
+                            <p className="text-sm text-gray-600">{comissao.indicacoes} indicações</p>
                           </div>
-                          <div className="text-right">
-                            <p className="font-bold text-green-600">{indicacao.comissao}</p>
-                            <Badge className="bg-green-100 text-green-800">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Pago
+                          <div>
+                            <p className="text-lg font-bold text-green-600">
+                              MT {comissao.valor.toFixed(2)}
+                            </p>
+                          </div>
+                          <div>
+                            <Badge className={getStatusColor(comissao.status)}>
+                              {comissao.status}
                             </Badge>
                           </div>
+                          <div>
+                            <p className="text-sm text-gray-600">
+                              {comissao.dataPagamento || "Aguardando"}
+                            </p>
+                          </div>
                         </div>
-                      ))}
+                      </div>
+                    ))}
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>📊 Resumo Pagamentos</CardTitle>
+                  <CardTitle>Resumo Financeiro</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="text-center">
-                      <p className="text-3xl font-bold text-green-600">{estatisticas.ganhoTotal.toLocaleString()}</p>
-                      <p className="text-sm text-gray-600">Total Recebido (MT)</p>
-                    </div>
+                <CardContent className="space-y-4">
+                  <div className="text-center p-4 bg-green-50 rounded-lg">
+                    <p className="text-sm text-gray-600">Total Ganho</p>
+                    <p className="text-2xl font-bold text-green-600">
+                      MT {stats.totalComissoes.toFixed(2)}
+                    </p>
+                  </div>
+                  
+                  <div className="text-center p-4 bg-yellow-50 rounded-lg">
+                    <p className="text-sm text-gray-600">Aguardando Pagamento</p>
+                    <p className="text-xl font-bold text-yellow-600">
+                      MT {stats.comissoesPendentes.toFixed(2)}
+                    </p>
+                  </div>
 
-                    <div className="space-y-3">
-                      <div className="flex justify-between">
-                        <span className="text-sm">Janeiro 2024:</span>
-                        <span className="font-medium">10.000 MT</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-sm">Fevereiro 2024:</span>
-                        <span className="font-medium">8.000 MT</span>
-                      </div>
-                    </div>
-
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                      <p className="text-sm font-medium text-yellow-800">Próximo Pagamento:</p>
-                      <p className="text-lg font-bold text-yellow-600">
-                        {estatisticas.ganhoPendente.toLocaleString()} MT
-                      </p>
-                      <p className="text-xs text-yellow-700">5 indicações pendentes</p>
-                    </div>
+                  <div className="space-y-2">
+                    <p className="text-sm font-medium">Próximo Pagamento</p>
+                    <p className="text-sm text-gray-600">05 de Fevereiro 2024</p>
+                    <Progress value={75} />
+                    <p className="text-xs text-gray-500">75% do período concluído</p>
                   </div>
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Ferramentas Tab */}
+          <TabsContent value="ferramentas" className="space-y-4">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Gerador de Links
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="campanha">Nome da Campanha</Label>
+                    <Input id="campanha" placeholder="Ex: WhatsApp Janeiro" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="utm">UTM Source</Label>
+                    <Input id="utm" placeholder="Ex: instagram, whatsapp, facebook" />
+                  </div>
+                  
+                  <Button className="w-full">
+                    <Zap className="h-4 w-4 mr-2" />
+                    Gerar Link Personalizado
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Star className="h-5 w-5" />
+                    Dicas de Conversão
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="p-3 bg-blue-50 rounded-lg">
+                    <h4 className="font-medium text-blue-900">🎯 Foque no problema</h4>
+                    <p className="text-sm text-blue-800">Destaque como nossos serviços resolvem os problemas do TCC</p>
+                  </div>
+                  
+                  <div className="p-3 bg-green-50 rounded-lg">
+                    <h4 className="font-medium text-green-900">⚡ Urgência</h4>
+                    <p className="text-sm text-green-800">Mencione prazos e a importância de começar logo</p>
+                  </div>
+                  
+                  <div className="p-3 bg-purple-50 rounded-lg">
+                    <h4 className="font-medium text-purple-900">👥 Prova Social</h4>
+                    <p className="text-sm text-purple-800">Compartilhe depoimentos e casos de sucesso</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Calculadora de Comissões */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Calculadora de Comissões</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label>Valor do Pedido (MT)</Label>
+                    <Input type="number" placeholder="750" />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Taxa de Comissão (%)</Label>
+                    <Input value="10" readOnly />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Sua Comissão</Label>
+                    <div className="text-lg font-bold text-green-600 bg-green-50 p-2 rounded">
+                      MT 75.00
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </div>
