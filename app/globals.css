@@ -137,11 +137,27 @@
 
   /* Mobile button optimizations */
   .mobile-btn-primary {
-    @apply bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-200 btn-mobile-touch;
+    @apply bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-200;
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .mobile-btn-secondary {
-    @apply bg-white hover:bg-gray-50 text-gray-900 font-semibold border border-gray-300 rounded-lg transition-all duration-200 btn-mobile-touch;
+    @apply bg-white hover:bg-gray-50 text-gray-900 font-semibold border border-gray-300 rounded-lg transition-all duration-200;
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Mobile touch improvements */
+  .mobile-tap-highlight {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .mobile-text-size-adjust {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
 }
 

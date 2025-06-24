@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { EyeIcon, EyeOffIcon, ArrowLeft, Sparkles, Shield, Users, Award, UserCheck, Building, GraduationCap } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, Sparkles, Shield, Users, Award, UserCheck, Building, GraduationCap } from "lucide-react"
 
 export default function LoginPage() {
   const router = useRouter()
