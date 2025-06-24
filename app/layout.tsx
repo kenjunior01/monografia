@@ -6,20 +6,17 @@ import "./globals.css"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "MonografiaPlus - Monografias Acadêmicas Personalizadas",
-  description:
-    "Plataforma líder em monografias acadêmicas sob medida com qualidade garantida e normas específicas por país e instituição.",
-  generator: 'v0.dev',
-  manifest: '/manifest.json',
-  themeColor: '#2563eb',
-  viewport: 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover',
+  title: "MonografiaPlus - Plataforma Acadêmica Profissional",
+  description: "Plataforma completa para desenvolvimento de monografias e trabalhos acadêmicos com especialistas qualificados em Moçambique",
+  keywords: "monografia, tcc, trabalhos académicos, universidade, moçambique, especialistas",
+  authors: [{ name: "MonografiaPlus" }],
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+  themeColor: "#3b82f6",
+  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
-    title: 'MonografiaPlus'
-  },
-  icons: {
-    apple: '/placeholder-logo.png'
+    statusBarStyle: "default",
+    title: "MonografiaPlus"
   }
 }
 
@@ -29,20 +26,33 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt">
       <head>
+        <link rel="manifest" href="/manifest.json" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="MonografiaPlus" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#2563eb" />
-        <meta name="msapplication-tap-highlight" content="no" />
-        <link rel="apple-touch-icon" href="/placeholder-logo.png" />
-        <link rel="icon" type="image/png" href="/placeholder-logo.png" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                      console.log('SW registered: ', registration);
+                    })
+                    .catch(function(registrationError) {
+                      console.log('SW registration failed: ', registrationError);
+                    });
+                });
+              }
+            `,
+          }}
+        />
       </head>
-      <body className={`${inter.className} mobile-text-size-adjust mobile-tap-highlight`}>
-        {children}
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   )
 }
