@@ -19,26 +19,47 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Implementar lógica de login aqui
-    console.log("Login attempt with:", { email, password, tipoUsuario })
-
-    // Redirecionamento baseado no tipo de usuário
-    switch (tipoUsuario) {
-      case "admin":
-        router.push("/admin/dashboard")
-        break
-      case "especialista":
-        router.push("/especialista/dashboard")
-        break
-      case "afiliado":
-        router.push("/afiliado/dashboard")
-        break
-      default:
-        router.push("/cliente/dashboard")
-        break
+    setError("")
+    setLoading(true)
+    try {
+      // Se for admin, só permite login com email/senha específicos
+      if (tipoUsuario === "admin") {
+        if (email !== "edibizmz@gmail.com" || password !== "Sarent0305") {
+          setError("Acesso restrito ao admin autorizado.")
+          setLoading(false)
+          return
+        }
+      }
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, tipoUsuario })
+      })
+      if (!res.ok) throw new Error("Email ou senha inválidos.")
+      // Redirecionamento baseado no tipo de usuário
+      switch (tipoUsuario) {
+        case "admin":
+          router.push("/admin/dashboard")
+          break
+        case "especialista":
+          router.push("/especialista/dashboard")
+          break
+        case "afiliado":
+          router.push("/afiliado/dashboard")
+          break
+        default:
+          router.push("/cliente/dashboard")
+          break
+      }
+    } catch (err: any) {
+      setError(err.message || "Erro desconhecido.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -58,79 +79,81 @@ export default function LoginPage() {
             <CardDescription>Entre na sua conta para acompanhar seus pedidos</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input id="email" type="email" placeholder="seu@email.com" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Sua senha"
-                  className="pl-10 pr-10"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-            <Label className="text-sm font-medium">Tipo de Acesso:</Label>
-            <RadioGroup value={tipoUsuario} onValueChange={setTipoUsuario} className="grid grid-cols-2 md:grid-cols-4 gap-3">
-              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
-                <RadioGroupItem value="cliente" id="cliente" />
-                <div className="flex items-center gap-2">
-                  <GraduationCap className="h-4 w-4 text-blue-600" />
-                  <Label htmlFor="cliente" className="text-xs md:text-sm cursor-pointer">Cliente</Label>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input id="email" type="email" placeholder="seu@email.com" className="pl-10" value={email} onChange={(e) => setEmail(e.target.value)} />
                 </div>
               </div>
-              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
-                <RadioGroupItem value="especialista" id="especialista" />
-                <div className="flex items-center gap-2">
-                  <Award className="h-4 w-4 text-green-600" />
-                  <Label htmlFor="especialista" className="text-xs md:text-sm cursor-pointer">Especialista</Label>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
-                <RadioGroupItem value="afiliado" id="afiliado" />
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4 text-purple-600" />
-                  <Label htmlFor="afiliado" className="text-xs md:text-sm cursor-pointer">Afiliado</Label>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
-                <RadioGroupItem value="admin" id="admin" />
-                <div className="flex items-center gap-2">
-                  <Building className="h-4 w-4 text-red-600" />
-                  <Label htmlFor="admin" className="text-xs md:text-sm cursor-pointer">Admin</Label>
-                </div>
-              </div>
-            </RadioGroup>
-          </div>
 
-            <div className="flex items-center justify-between">
-              <Link href="/esqueci-senha" className="text-sm text-blue-600 hover:underline">
-                Esqueci minha senha
-              </Link>
-            </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Senha</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Sua senha"
+                    className="pl-10 pr-10"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-3 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
 
-            <Button className="w-full" size="lg" onClick={handleLogin}>
-              Entrar
-            </Button>
+              <div className="space-y-4">
+                <Label className="text-sm font-medium">Tipo de Acesso:</Label>
+                <RadioGroup value={tipoUsuario} onValueChange={setTipoUsuario} className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="cliente" id="cliente" />
+                    <div className="flex items-center gap-2">
+                      <GraduationCap className="h-4 w-4 text-blue-600" />
+                      <Label htmlFor="cliente" className="text-xs md:text-sm cursor-pointer">Cliente</Label>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="especialista" id="especialista" />
+                    <div className="flex items-center gap-2">
+                      <Award className="h-4 w-4 text-green-600" />
+                      <Label htmlFor="especialista" className="text-xs md:text-sm cursor-pointer">Especialista</Label>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="afiliado" id="afiliado" />
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4 text-purple-600" />
+                      <Label htmlFor="afiliado" className="text-xs md:text-sm cursor-pointer">Afiliado</Label>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2 border rounded-lg p-3 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="admin" id="admin" />
+                    <div className="flex items-center gap-2">
+                      <Building className="h-4 w-4 text-red-600" />
+                      <Label htmlFor="admin" className="text-xs md:text-sm cursor-pointer">Admin</Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <Link href="/esqueci-senha" className="text-sm text-blue-600 hover:underline">
+                  Esqueci minha senha
+                </Link>
+              </div>
+              {error && <div className="text-red-600 text-sm">{error}</div>}
+              <Button className="w-full" size="lg" type="submit" disabled={loading}>
+                {loading ? "Entrando..." : "Entrar"}
+              </Button>
+            </form>
 
             <Separator />
 
