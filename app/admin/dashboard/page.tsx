@@ -139,14 +139,6 @@ export default function AdminDashboard() {
     },
   ])
 
-  // Mock de usuários (clientes)
-  const [usuarios, setUsuarios] = useState([
-    { id: "1", nome: "João Silva", email: "joao@email.com", telefone: "(11) 99999-1111", tipo: "cliente" },
-    { id: "2", nome: "Maria Santos", email: "maria@email.com", telefone: "(11) 99999-2222", tipo: "cliente" },
-  ])
-  const [editandoId, setEditandoId] = useState<string | null>(null)
-  const [novoTelefone, setNovoTelefone] = useState("")
-
   const getStatusColor = (status: string) => {
     switch (status) {
       case "em-andamento":
@@ -300,11 +292,10 @@ export default function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="pedidos" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 gap-1">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 gap-1">
             <TabsTrigger value="pedidos" className="text-xs md:text-sm">Pedidos</TabsTrigger>
             <TabsTrigger value="afiliados" className="text-xs md:text-sm">Afiliados</TabsTrigger>
             <TabsTrigger value="especialistas" className="text-xs md:text-sm">Especialistas</TabsTrigger>
-            <TabsTrigger value="usuarios" className="text-xs md:text-sm">Usuários</TabsTrigger>
             <TabsTrigger value="pagamentos" className="text-xs md:text-sm">Pagamentos</TabsTrigger>
             <TabsTrigger value="analytics" className="text-xs md:text-sm">Analytics</TabsTrigger>
             <TabsTrigger value="configuracoes" className="text-xs md:text-sm">Config</TabsTrigger>
@@ -670,64 +661,6 @@ export default function AdminDashboard() {
                       </CardContent>
                     </Card>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="usuarios">
-            <Card>
-              <CardHeader>
-                <CardTitle>Usuários (Clientes)</CardTitle>
-                <CardDescription>Edite o número de WhatsApp dos clientes</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="min-w-full text-sm">
-                    <thead>
-                      <tr className="bg-gray-100">
-                        <th className="p-2 text-left">Nome</th>
-                        <th className="p-2 text-left">Email</th>
-                        <th className="p-2 text-left">Telefone/WhatsApp</th>
-                        <th className="p-2 text-left">Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {usuarios.map((usuario) => (
-                        <tr key={usuario.id} className="border-b">
-                          <td className="p-2">{usuario.nome}</td>
-                          <td className="p-2">{usuario.email}</td>
-                          <td className="p-2">
-                            {editandoId === usuario.id ? (
-                              <Input
-                                value={novoTelefone}
-                                onChange={e => setNovoTelefone(e.target.value)}
-                                className="w-40"
-                              />
-                            ) : (
-                              usuario.telefone
-                            )}
-                          </td>
-                          <td className="p-2">
-                            {editandoId === usuario.id ? (
-                              <>
-                                <Button size="sm" className="mr-2" onClick={() => {
-                                  setUsuarios(us => us.map(u => u.id === usuario.id ? { ...u, telefone: novoTelefone } : u))
-                                  setEditandoId(null)
-                                }}>Salvar</Button>
-                                <Button size="sm" variant="outline" onClick={() => setEditandoId(null)}>Cancelar</Button>
-                              </>
-                            ) : (
-                              <Button size="sm" variant="outline" onClick={() => {
-                                setEditandoId(usuario.id)
-                                setNovoTelefone(usuario.telefone)
-                              }}>Editar</Button>
-                            )}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
                 </div>
               </CardContent>
             </Card>

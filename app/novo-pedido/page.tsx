@@ -32,11 +32,8 @@ import {
   Zap,
   Lock,
   Eye,
-  EyeOff,
-  Download
+  EyeOff
 } from "lucide-react"
-import { sugerirTemasGemini } from "@/lib/gemini"
-import jsPDF from "jspdf"
 
 import type { Viewport } from "next"
 
@@ -74,10 +71,6 @@ export default function NovoPedidoPage() {
     total: 0
   })
 
-  const [sugestoesIA, setSugestoesIA] = useState<string[]>([])
-  const [loadingSugestao, setLoadingSugestao] = useState(false)
-  const [erroSugestao, setErroSugestao] = useState("")
-
   const calcularPreco = () => {
     const precoBase = parseInt(formData.numeroPaginas) * 150 // 150 MT por página
     const multiplicadorUrgencia = formData.urgente ? 1.5 : 1
@@ -105,108 +98,6 @@ export default function NovoPedidoPage() {
 
   const prevStep = () => {
     if (step > 1) setStep(step - 1)
-  }
-
-  async function handleSugestaoIA() {
-    setErroSugestao("")
-    setLoadingSugestao(true)
-    setSugestoesIA([])
-    try {
-      const prompt = `Sugira 5 temas de monografia para o curso de ${formData.curso} na instituição ${formData.instituicao}. Contexto: ${formData.descricao}`
-      const sugestoes = await sugerirTemasGemini(prompt)
-      setSugestoesIA(sugestoes)
-    } catch (e: any) {
-      setErroSugestao(e.message || "Erro ao obter sugestões da IA.")
-    } finally {
-      setLoadingSugestao(false)
-    }
-  }
-
-  // Função para baixar fatura em PDF com layout personalizado
-  async function handleDownloadPDF() {
-    const doc = new jsPDF({ unit: "mm", format: "a4" })
-    const pageWidth = doc.internal.pageSize.getWidth()
-    let y = 15
-    // Logo centralizado
-    const logoUrl = "/placeholder-logo.png"
-    const img = new window.Image()
-    img.src = logoUrl
-    img.onload = function () {
-      doc.addImage(img, "PNG", (pageWidth-40)/2, y, 40, 20)
-      y += 25
-      // Nome plataforma
-      doc.setFontSize(20)
-      doc.setTextColor(37, 99, 235)
-      doc.text("MonografiaPlus", pageWidth/2, y, { align: "center" })
-      y += 8
-      // Cabeçalho
-      doc.setFontSize(12)
-      doc.setTextColor(0,0,0)
-      doc.text(`Fatura do Pedido`, 15, y)
-      doc.text(`Data: ${new Date().toLocaleDateString()}`, pageWidth-15, y, { align: "right" })
-      y += 8
-      doc.setDrawColor(37, 99, 235)
-      doc.line(15, y, pageWidth-15, y)
-      y += 6
-      // Dados do cliente
-      doc.setFontSize(11)
-      doc.setTextColor(37, 99, 235)
-      doc.text("Dados do Cliente", 15, y)
-      doc.setTextColor(0,0,0)
-      y += 6
-      doc.text(`Nome: ${formData.nome}`, 15, y)
-      y += 6
-      doc.text(`Email: ${formData.email}`, 15, y)
-      y += 6
-      doc.text(`Telefone: ${formData.telefone}`, 15, y)
-      y += 8
-      // Detalhes do pedido
-      doc.setFontSize(11)
-      doc.setTextColor(37, 99, 235)
-      doc.text("Detalhes do Pedido", 15, y)
-      doc.setTextColor(0,0,0)
-      y += 6
-      doc.text(`Instituição: ${formData.instituicao}`, 15, y)
-      y += 6
-      doc.text(`Curso: ${formData.curso}`, 15, y)
-      y += 6
-      doc.text(`Tema: ${formData.tema}`, 15, y)
-      y += 6
-      doc.text(`Tipo: ${formData.tipoProjeto}`, 15, y)
-      y += 6
-      doc.text(`Nº de Páginas: ${formData.numeroPaginas}`, 15, y)
-      y += 6
-      doc.text(`Prazo: ${formData.prazo} dias`, 15, y)
-      y += 6
-      doc.text(`Normas: ${formData.normas}`, 15, y)
-      y += 6
-      doc.text(`Urgente: ${formData.urgente ? "Sim" : "Não"}`, 15, y)
-      y += 6
-      doc.text(`Extras: ${formData.incluirRevisao ? "Revisão " : ""}${formData.incluirDefesa ? "Defesa" : ""}`, 15, y)
-      y += 10
-      // Tabela de valores
-      doc.setFillColor(37, 99, 235)
-      doc.roundedRect(15, y, pageWidth-30, 30, 3, 3, 'F')
-      doc.setTextColor(255,255,255)
-      doc.setFontSize(13)
-      doc.text("Resumo de Valores", pageWidth/2, y+7, { align: "center" })
-      doc.setFontSize(11)
-      doc.text(`Subtotal: ${preco.subtotal.toLocaleString()} MT`, 20, y+15)
-      doc.text(`Urgência: ${preco.urgencia.toLocaleString()} MT`, 20, y+21)
-      doc.text(`Extras: ${preco.extras.toLocaleString()} MT`, 20, y+27)
-      doc.setFontSize(14)
-      doc.setTextColor(255,255,0)
-      doc.text(`Total: ${preco.total.toLocaleString()} MT`, pageWidth-20, y+27, { align: "right" })
-      y += 38
-      // Rodapé
-      doc.setFontSize(10)
-      doc.setTextColor(37, 99, 235)
-      doc.text("Obrigado por escolher a MonografiaPlus!", pageWidth/2, y, { align: "center" })
-      y += 6
-      doc.setTextColor(120,120,120)
-      doc.text("Esta fatura é válida como comprovativo do seu pedido.", pageWidth/2, y, { align: "center" })
-      doc.save("fatura-monografia.pdf")
-    }
   }
 
   return (
@@ -401,24 +292,6 @@ export default function NovoPedidoPage() {
                   </Select>
                 </div>
               </div>
-
-              <div className="flex gap-2 items-center">
-                <Button type="button" variant="outline" onClick={handleSugestaoIA} disabled={loadingSugestao}>
-                  {loadingSugestao ? "Gerando sugestões..." : "Sugerir Tema com IA"}
-                </Button>
-                {erroSugestao && <span className="text-red-600 text-sm">{erroSugestao}</span>}
-              </div>
-              {sugestoesIA.length > 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
-                  <div className="font-medium mb-1">Sugestões de Tema pela IA:</div>
-                  <ul className="list-disc pl-5 space-y-1">
-                    {sugestoesIA.map((s, i) => (
-                      <li key={i} className="cursor-pointer hover:underline" onClick={() => handleInputChange('tema', s)}>{s}</li>
-                    ))}
-                  </ul>
-                  <div className="text-xs text-gray-500 mt-1">Clique em uma sugestão para preencher o campo de tema automaticamente.</div>
-                </div>
-              )}
 
               <div className="flex justify-between">
                 <Button variant="outline" onClick={prevStep}>
@@ -630,10 +503,6 @@ export default function NovoPedidoPage() {
                   <Button variant="outline" onClick={prevStep} className="w-full">
                     <ArrowLeft className="h-4 w-4 mr-2" />
                     Voltar e Revisar
-                  </Button>
-                  <Button variant="outline" onClick={handleDownloadPDF} className="w-full">
-                    <Download className="h-4 w-4 mr-2" />
-                    Baixar Fatura em PDF
                   </Button>
                 </div>
               </CardContent>
