@@ -34,35 +34,30 @@ export default function CadastroPage() {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
-    // Impede cadastro de admin com email/senha diferentes do permitido
-    if (tipoUsuario === "admin") {
-      if (form.email !== "edibizmz@gmail.com" || form.password !== "Sarent0305") {
-        setError("Cadastro de admin permitido apenas com email e senha específicos.")
-        return
-      }
-    }
-    if (!form.nome || (!form.telefone && tipoUsuario !== "cliente") || !form.email || !form.password || !form.confirmPassword) {
-      setError("Preencha todos os campos.")
-      return
-    }
     if (form.password !== form.confirmPassword) {
-      setError("As senhas não coincidem.")
-      return
+      setError("As senhas não coincidem.");
+      return;
     }
-    setLoading(true)
+
+    setLoading(true);
     try {
-      const res = await fetch("/api/usuarios", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/cadastro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nome: form.nome,
           email: form.email,
           telefone: form.telefone,
           password: form.password,
-          tipo: tipoUsuario
-        })
-      })
-      if (!res.ok) throw new Error
+          tipo: tipoUsuario,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Ocorreu um erro ao registar.');
+      }
       // Redireciona para o painel correto
       switch (tipoUsuario) {
         case "admin":

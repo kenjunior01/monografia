@@ -14,6 +14,70 @@ interface PricingRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    const body: PricingRequest = await request.json()
+
+    // Preço base por página
+    const precoPorPagina = 300 // 300 MT por página
+    const base = body.paginas * precoPorPagina
+
+    // Multiplicadores baseados no nível acadêmico
+    const multiplicadorNivel = {
+      licenciatura: 1,
+      mestrado: 1.3,
+      doutoramento: 1.5
+    }[body.nivel] || 1
+
+    // Multiplicador de urgência baseado no prazo
+    let multiplicadorUrgencia = 1
+    if (body.prazo <= 3) multiplicadorUrgencia = 2
+    else if (body.prazo <= 7) multiplicadorUrgencia = 1.5
+    else if (body.prazo <= 14) multiplicadorUrgencia = 1.2
+
+    // Calcular extras
+    const extras = [
+      body.precisaEstudoCaso ? 2500 : 0,
+      body.revisoesPremium ? 1500 : 0,
+      body.suporteUrgente ? 2000 : 0,
+      body.formatacaoEspecial ? 1000 : 0,
+      body.apresentacaoDefesa ? 3000 : 0
+    ].reduce((a, b) => a + b, 0)
+
+    // Calcular preço total
+    const subtotal = base * multiplicadorNivel * multiplicadorUrgencia
+    const desconto = 2000 // Desconto promocional fixo
+    const total = subtotal + extras - desconto
+
+    return NextResponse.json({
+      base: subtotal,
+      extras,
+      desconto,
+      total,
+      detalhes: {
+        precoPorPagina,
+        multiplicadorNivel,
+        multiplicadorUrgencia
+      }
+    })
+  } catch (error) {
+    console.error("Erro ao calcular preço:", error)
+    return NextResponse.json(
+      { success: false, error: "Erro ao calcular preço" },
+      { status: 500 }
+    )
+  }
+}  paginas: number
+  prazo: number
+  nivel: string
+  area: string
+  precisaEstudoCaso: boolean
+  revisoesPremium: boolean
+  suporteUrgente: boolean
+  formatacaoEspecial: boolean
+  apresentacaoDefesa: boolean
+}
+
+export async function POST(request: NextRequest) {
+  try {
     const data: PricingRequest = await request.json()
 
     // Configuração base de preços (em MT)

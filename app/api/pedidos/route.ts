@@ -1,45 +1,30 @@
 import { type NextRequest, NextResponse } from "next/server"
-
-// Simulação de dados - em produção viria do Supabase
-const pedidos = [
-  {
-    id: "1",
-    numero_pedido: "MON-001",
-    titulo: "Gestão de Recursos Humanos em Startups",
-    status: "em-andamento",
-    progresso: 65,
-    prazo: "2024-02-15",
-    valor: "R$ 750,00",
-    escritor: "Dr. Ana Silva",
-    cliente_id: "user-1",
-  },
-  {
-    id: "2",
-    numero_pedido: "MON-002",
-    titulo: "Sustentabilidade no Setor Bancário",
-    status: "concluido",
-    progresso: 100,
-    prazo: "2024-01-20",
-    valor: "R$ 900,00",
-    escritor: "Prof. Carlos Santos",
-    cliente_id: "user-1",
-  },
-]
+import { supabase } from "@/lib/supabaseClient";
 
 export async function GET(request: NextRequest) {
   try {
-    // Em produção, aqui faria a consulta no Supabase
-    // const { data, error } = await supabase
-    //   .from('pedidos')
-    //   .select('*')
-    //   .eq('cliente_id', userId)
+    const { searchParams } = new URL(request.url);
+    const clienteId = searchParams.get('cliente_id');
+
+    let query = supabase.from('pedidos').select('*');
+
+    if (clienteId) {
+      query = query.eq('cliente_id', clienteId);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      console.error('Erro ao buscar pedidos:', error);
+      throw new Error('Erro no servidor ao buscar pedidos.');
+    }
 
     return NextResponse.json({
       success: true,
-      data: pedidos,
-    })
-  } catch (error) {
-    return NextResponse.json({ success: false, error: "Erro ao buscar pedidos" }, { status: 500 })
+      data: data,
+    });
+  } catch (error: any) {
+    return NextResponse.json({ success: false, error: error.message || "Erro ao buscar pedidos" }, { status: 500 });
   }
 }
 
@@ -47,41 +32,113 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    // Validação básica
-    const requiredFields = ["pais", "instituicao", "nivel", "area", "paginas", "prazo"]
+    // Validação dos campos do formulário
+    const requiredFields = [
+      "nome",
+      "email",
+      "telefone",
+      "paisRegiao",
+      "universidade",
+      "nivelCurso",
+      "areaEstudo",
+      "tema",
+      "numeroPaginas",
+      "prazo",
+      "pagamento"
+    ]
     for (const field of requiredFields) {
       if (!body[field]) {
-        return NextResponse.json({ success: false, error: `Campo ${field} é obrigatório` }, { status: 400 })
+        return NextResponse.json({ success: false, error: `O campo ${field} é obrigatório` }, { status: 400 })
       }
     }
 
-    // Calcular preço
-    const paginas = Number.parseInt(body.paginas)
-    const prazo = Number.parseInt(body.prazo)
-    let precoPorPagina = 15
+    // Usar os valores de preço calculados pelo frontend
+    const { base, desconto, total, extras } = body
+    
+    // Gerar código único do pedido
+    const dataAtual = new Date()
+    const ano = dataAtual.getFullYear().toString().slice(-2)
+    const mes = String(dataAtual.getMonth() + 1).padStart(2, '0')
+    const sequencial = String(Date.now()).slice(-4)
+    const codigoPedido = `MON${ano}${mes}-${sequencial}`
 
-    if (paginas > 50) precoPorPagina = 12
-    if (prazo <= 5) precoPorPagina = 20
+    const prazoDate = new Date();
+    prazoDate.setDate(prazoDate.getDate() + body.prazo);
 
-    const precoBase = paginas * precoPorPagina
-    const precoFinal = body.precisaEstudoCaso ? precoBase * 1.3 : precoBase
+    const { data: pedidoData, error: pedidoError } = await supabase
+      .from('pedidos')
+      .insert([
+        {
+          numero_pedido: codigoPedido,
+          // cliente_id: userId, // TODO: Adicionar ID do usuário logado
+          pais: body.paisRegiao,
+          instituicao: body.universidade,
+          nivel_academico: body.nivelCurso,
+          area_estudo: body.areaEstudo,
+          tema: body.tema,
+          numero_paginas: body.numeroPaginas,
+          prazo_dias: body.prazo,
+          estilo_citacao: body.estiloCitacao || 'APA', // Valor padrão
+          descricao: body.detalhes,
+          valor_total: total,
+          status_pagamento: 'pendente',
+          status: 'novo',
+          data_prazo: prazoDate.toISOString().split('T')[0],
+        },
+      ])
+      .select()
+      .single();
 
-    // Em produção, salvaria no Supabase
-    const novoPedido = {
-      id: Date.now().toString(),
-      numero_pedido: `MON-${String(Date.now()).slice(-3)}`,
-      ...body,
-      valor_total: precoFinal,
-      status: "novo",
-      progresso: 0,
-      data_pedido: new Date().toISOString(),
+    if (pedidoError) {
+      console.error("Erro ao salvar pedido no Supabase:", pedidoError);
+      return NextResponse.json({ success: false, error: "Erro ao criar o pedido no banco de dados." }, { status: 500 });
     }
 
-    return NextResponse.json({
-      success: true,
-      data: novoPedido,
-    })
+    // Enviar e-mail de notificação para o administrador
+    const adminEmail = 'edibizmz@gmail.com';
+    const emailBody = `
+      Novo pedido recebido!
+      
+      Código: ${codigoPedido}
+      Cliente: ${body.nome}
+      Email: ${body.email}
+      Telefone: ${body.telefone}
+      Tema: ${body.tema}
+      Nível: ${body.nivelCurso}
+      Área: ${body.areaEstudo}
+      Páginas: ${body.numeroPaginas}
+      Prazo: ${body.prazo} dias
+      Valor: ${total} MT
+    `;
+
+    try {
+      await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${process.env.RESEND_API_KEY}`
+        },
+        body: JSON.stringify({
+          from: 'Monografia+ <noreply@monografiaplus.com>',
+          to: adminEmail,
+          subject: `Novo Pedido Recebido - ${codigoPedido}`,
+          text: emailBody
+        })
+      });
+    } catch (emailError) {
+      console.error('Erro ao enviar e-mail de notificação:', emailError);
+      // Não retornar erro para não afetar a experiência do usuário
+    }
+
+    return NextResponse.json({ 
+      success: true, 
+      message: "Pedido criado com sucesso!", 
+      pedidoId: pedidoData.id 
+    });
+
+
   } catch (error) {
-    return NextResponse.json({ success: false, error: "Erro ao criar pedido" }, { status: 500 })
+    console.error("Erro ao criar pedido:", error);
+    return NextResponse.json({ success: false, error: "Ocorreu um erro inesperado ao processar o seu pedido." }, { status: 500 })
   }
 }

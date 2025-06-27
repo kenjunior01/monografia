@@ -27,20 +27,17 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
     try {
-      // Se for admin, só permite login com email/senha específicos
-      if (tipoUsuario === "admin") {
-        if (email !== "edibizmz@gmail.com" || password !== "Sarent0305") {
-          setError("Acesso restrito ao admin autorizado.")
-          setLoading(false)
-          return
-        }
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, tipoUsuario }),
+      });
+
+      const result = await res.json();
+
+      if (!result.success) {
+        throw new Error(result.error || 'Email ou senha inválidos.');
       }
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, tipoUsuario })
-      })
-      if (!res.ok) throw new Error("Email ou senha inválidos.")
       // Redirecionamento baseado no tipo de usuário
       switch (tipoUsuario) {
         case "admin":
